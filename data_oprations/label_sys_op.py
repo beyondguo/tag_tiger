@@ -215,6 +215,6 @@ def label_sys_tagged_data_download(label_sys_id, task_id_list):
         else:
             d[each.id] = {'title':each.title, 'content':each.content, 'label':each.name}
     df = pd.concat([pd.DataFrame(d.keys(),columns=['doc_id']),pd.DataFrame(d.values())],axis=1)
-    df.to_excel('download_datasets/%s.xlsx'%file_name)
+    df.to_csv('download_datasets/%s.csv'%file_name)
     sess.close()
     return file_name

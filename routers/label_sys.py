@@ -107,7 +107,7 @@ def download(downlad_request: LsDataRequestBody, user_id: int = Depends(get_user
     label_sys_id = downlad_request.label_sys_id
     task_id_list = downlad_request.task_id_list
     file_name = label_sys_op.label_sys_tagged_data_download(label_sys_id, task_id_list)
-    return FileResponse('download_datasets/%s.xlsx'%file_name, filename='%s.xlsx' % file_name)
+    return FileResponse('download_datasets/%s.csv'%file_name, filename='%s.csv' % file_name)
 
 
 @router.post("/label_sys/label_counts")
