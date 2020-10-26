@@ -122,6 +122,7 @@ def add_task_info(task : Task, task_id, admin_id):
     current_time_str = datetime.fromtimestamp(int(time.time()))
     db_task = Task_(id=task_id,name=task.name,desc=task.desc,admin_id=admin_id,create_time=current_time_str) # ??
     sess.add(db_task)
+    sess.commit()
 
     # 插入task_records表
     for label_sys_id in task.label_sys_ids:
