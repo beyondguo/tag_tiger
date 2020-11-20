@@ -46,14 +46,14 @@ def fetch_one_doc(task_id: int):
 
 def view_one_doc(doc_id: int):
     sess = SessionLocal()
-    doc = sess.query(Document_.title, Document_.content).filter(Document_.id == doc_id).first()
+    doc = sess.query(Document_.title, Document_.content, Document_.task_id).filter(Document_.id == doc_id).first()
     if not doc:
         sess.close()
         return None
     labels = sess.query(Label_.id, Label_.name).join(TaggingRecords_).filter(TaggingRecords_.doc_id == doc_id).all()
 
     ## 也进行关键词高亮：
-    labels = sess.query(Label_).join(LabelSys_).join(TaskRecords_).filter(TaskRecords_.task_id == task_id).all()
+    labels = sess.query(Label_).join(LabelSys_).join(TaskRecords_).filter(TaskRecords_.task_id == doc.task_id).all()
     # 收集所有关键词，构建AC自动机：
     kws = []
     for l in labels:
