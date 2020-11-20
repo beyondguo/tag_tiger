@@ -1,10 +1,11 @@
 import time
 from datetime import datetime
-from models.Models import Document_, TaggingRecords_, Label_
+from models.Models import *
 from schemas.Schemas import TaggingRecord
 from data_oprations.database import SessionLocal
 from data_oprations.snow_flake import MySnow
 from random import randrange
+from data_oprations.ac_search import AhoCorasick
 my_snow = MySnow(3)
 
 
@@ -12,6 +13,18 @@ def fetch_one_doc(task_id: int):
     sess = SessionLocal()
     # 随机获取一条记录
     docs = sess.query(Document_.id).filter(Document_.task_id == task_id).filter(Document_.state == 0).all()
+    # 由于要显示关键词，所以需要根据task找出对应的label system中的关键词
+    # 这里获取关键词有两种办法（TBD）：
+    # 1. 通过参数传进来，这样的话就不用每次都查询库了，在同一个task里面，关键词应该是一样的，但是这样就无法实现实时更新地显示
+    # 2. 每次都去查询库中的关键词，这样的话查询量会稍大，但是如果临时更新了关键词，也可以马上在系统上反映出来
+    # 2020.11.23 按照上的方法2实现：
+    labels = sess.query(Label_).join(LabelSys_).join(TaskRecords_).filter(TaskRecords_.task_id == task_id).all()
+    # 收集所有关键词，构建AC自动机：
+    kws= []
+    for l in labels:
+        kws += l.keywords.split(' ')
+    AC = AhoCorasick(kws)
+
     if not docs:
         return None
     rand = randrange(len(docs))
@@ -19,7 +32,14 @@ def fetch_one_doc(task_id: int):
     # sess.query(Document_).filter(Document_.id == current_doc.id).update({Document_.state:1}) # 一经读取，就马上设为“tagged”
     # sess.commit()
     current_doc = sess.query(Document_).filter(Document_.id == current_doc.id).first()
-    res = {"id": current_doc.id, "title": current_doc.title, "content": current_doc.content}
+    highlight_kws = list(AC.search(current_doc.content))
+    highlighted_content = current_doc.content
+    print('***********highlight_kws***********:\n', highlight_kws)
+    if highlight_kws:
+        for kw in highlight_kws:
+            highlighted_content = highlighted_content.replace(kw,"<b style='color:orange'>"+kw+"</b>")
+    res = {"id": current_doc.id, "title": current_doc.title, "content": highlighted_content, "highlight_kws": highlight_kws}
+
     sess.close()
     return res
 

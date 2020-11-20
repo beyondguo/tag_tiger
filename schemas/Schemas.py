@@ -12,7 +12,7 @@ class User(BaseModel):
 class Label(BaseModel):
     name: str
     desc: Optional[str] = None
-
+    keywords: Optional[str] = None
 
 class LabelSys(BaseModel):
     name: str

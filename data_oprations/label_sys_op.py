@@ -116,8 +116,8 @@ def add_label_sys(label_sys: LabelSys, admin_id: int):
      'name':str,
      'desc':str,
      'multi':int,
-     'labels':[{'name':str,'desc':str},
-               {'name':str,'desc':str},...]
+     'labels':[{'name':str,'desc':str,'keywords':str},
+               {'name':str,'desc':str,'keywords':str},...]
     }
     """
     if check_label_sys_name(label_sys.name):
@@ -134,7 +134,7 @@ def add_label_sys(label_sys: LabelSys, admin_id: int):
     for label in label_sys.labels:
         label_id = int(my_snow.get_id())
         label_id_list.append(label_id)
-        db_label = Label_(id=label_id, name=label.name, desc=label.desc, label_sys_id=label_sys_id)
+        db_label = Label_(id=label_id, name=label.name, desc=label.desc, keywords=label.keywords, label_sys_id=label_sys_id)
         sess.add(db_label)
         sess.commit()
         sess.refresh(db_label)

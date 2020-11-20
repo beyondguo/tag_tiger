@@ -46,6 +46,7 @@ class Label_(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String)
     desc = Column(String)
+    keywords = Column(String)
     label_sys_id = Column(Integer, ForeignKey("label_sys.id"))
 
 
