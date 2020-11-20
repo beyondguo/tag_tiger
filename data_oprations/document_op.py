@@ -51,7 +51,22 @@ def view_one_doc(doc_id: int):
         sess.close()
         return None
     labels = sess.query(Label_.id, Label_.name).join(TaggingRecords_).filter(TaggingRecords_.doc_id == doc_id).all()
-    doc_info = {'id':doc_id,'title':doc.title,'content':doc.content,
+
+    ## 也进行关键词高亮：
+    labels = sess.query(Label_).join(LabelSys_).join(TaskRecords_).filter(TaskRecords_.task_id == task_id).all()
+    # 收集所有关键词，构建AC自动机：
+    kws = []
+    for l in labels:
+        kws += l.keywords.split(' ')
+    AC = AhoCorasick(kws)
+    highlight_kws = list(AC.search(doc.content))
+    highlighted_content = doc.content
+    print('***********highlight_kws***********:\n', highlight_kws)
+    if highlight_kws:
+        for kw in highlight_kws:
+            highlighted_content = highlighted_content.replace(kw, "<b style='color:orange'>" + kw + "</b>")
+
+    doc_info = {'id':doc_id,'title':doc.title,'content':highlighted_content,
                 'labels':[{'id':l.id,'name':l.name} for l in labels]}
     sess.close()
     return doc_info
