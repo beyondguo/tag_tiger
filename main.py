@@ -8,6 +8,7 @@ app = FastAPI()
 origins = [
     "http://localhost",
     "http://localhost:8080",
+    "http://tag.hewdexam.top/"
 ]
 
 app.add_middleware(
