@@ -61,6 +61,7 @@ def view_one_doc(doc_id: int):
     kws = []
     for l in labels:
         kws += l.keywords.split(' ')
+    kws = [w for w in kws if w != '']
     AC = AhoCorasick(kws)
     highlight_kws = list(AC.search(doc.content))
     highlighted_content = doc.content
