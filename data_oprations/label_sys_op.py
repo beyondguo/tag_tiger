@@ -82,7 +82,7 @@ def get_detail_by_id(label_sys_id: int):
     label_sys_detail = {'id': label_sys_id, 'name': label_sys.name, 'desc': label_sys.desc,
                         'multi': str(label_sys.multi), 'num_labels': len(labels), 'labels': []}
     for label in labels:
-        label_sys_detail['labels'].append({'id': label.id, 'name': label.name, 'desc': label.desc})
+        label_sys_detail['labels'].append({'id': label.id, 'name': label.name, 'desc': label.desc, 'keywords': label.keywords})
     sess.close()
     return label_sys_detail
 
