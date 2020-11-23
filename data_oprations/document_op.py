@@ -22,7 +22,10 @@ def fetch_one_doc(task_id: int):
     # 收集所有关键词，构建AC自动机：
     kws= []
     for l in labels:
+        print(l.keywords)
         kws += l.keywords.split(' ')
+    kws = [w for w in kws if w != '']
+    print('after: ', kws)
     AC = AhoCorasick(kws)
 
     if not docs:

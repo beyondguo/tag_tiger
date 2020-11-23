@@ -79,6 +79,14 @@ def add_label_sys(label_sys: LabelSys, admin_id: int = Depends(get_admin_id)):
         return {"res": {}, "msg": "label system already exists!"}
     return {"res": res, "msg": "Success!"}
 
+@router.post("/label_sys/update_label_sys")
+def update_label_sys(label_sys: LabelSys, admin_id: int = Depends(get_admin_id)):
+    """
+    ## 编辑并更新标签体系
+    """
+    res = label_sys_op.update_label_sys(label_sys, admin_id)
+    return {"res": res, "msg": "Success!"}
+
 
 @router.post("/label_sys/delete_label_sys")
 def delete_label_sys(label_sys_id:int, admin_id: int = Depends(get_admin_id)):

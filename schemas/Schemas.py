@@ -10,11 +10,13 @@ class User(BaseModel):
     password: str
 
 class Label(BaseModel):
+    id: Optional[int] = None
     name: str
     desc: Optional[str] = None
     keywords: Optional[str] = None
 
 class LabelSys(BaseModel):
+    id: Optional[int] = None
     name: str
     desc: Optional[str] = None
     multi: int

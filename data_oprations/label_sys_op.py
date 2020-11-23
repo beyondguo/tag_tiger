@@ -144,6 +144,31 @@ def add_label_sys(label_sys: LabelSys, admin_id: int):
     return res
 
 
+def update_label_sys(label_sys: LabelSys, admin_id: int):
+    """
+    可以直接在下面的update语句里面，调整允许更新的字段。
+    目前multi字段是不允许更新的
+    """
+    assert label_sys.id is not None, "label_sys的id没给我！"
+    sess = SessionLocal()
+    res = sess.query(LabelSys_).filter(LabelSys_.id == label_sys.id)\
+        .update({LabelSys_.name : label_sys.name, LabelSys_.desc : label_sys.desc})
+    print('ls_res:',res)
+    labels = label_sys.labels
+    if not labels:
+        return 1
+    for label in labels:
+        assert label.id is not None, "label的id没给我！"
+        res = sess.query(Label_).filter(Label_.id == label.id)\
+            .update({Label_.name : label.name, Label_.desc : label.desc, Label_.keywords : label.keywords})
+        print('l_res:',res)
+    sess.commit()
+    sess.close()
+    return 1
+
+
+
+
 def delete_label_sys(label_sys_id:int):
     sess = SessionLocal()
     res = sess.query(LabelSys_).filter(LabelSys_.id == label_sys_id).delete()
