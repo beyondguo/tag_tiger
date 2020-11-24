@@ -22,7 +22,8 @@ def fetch_one_doc(task_id: int):
     # 收集所有关键词，构建AC自动机：
     kws= []
     for l in labels:
-        print(l.keywords)
+        if not l.keywords:
+            continue
         kws += l.keywords.split(' ')
     kws = [w for w in kws if w != '']
     print('after: ', kws)
@@ -53,13 +54,14 @@ def view_one_doc(doc_id: int):
     if not doc:
         sess.close()
         return None
-    labels = sess.query(Label_.id, Label_.name).join(TaggingRecords_).filter(TaggingRecords_.doc_id == doc_id).all()
 
     ## 也进行关键词高亮：
-    labels = sess.query(Label_).join(LabelSys_).join(TaskRecords_).filter(TaskRecords_.task_id == doc.task_id).all()
+    task_labels = sess.query(Label_).join(LabelSys_).join(TaskRecords_).filter(TaskRecords_.task_id == doc.task_id).all()
     # 收集所有关键词，构建AC自动机：
     kws = []
-    for l in labels:
+    for l in task_labels:
+        if not l.keywords:
+            continue
         kws += l.keywords.split(' ')
     kws = [w for w in kws if w != '']
     AC = AhoCorasick(kws)
@@ -70,6 +72,7 @@ def view_one_doc(doc_id: int):
         for kw in highlight_kws:
             highlighted_content = highlighted_content.replace(kw, "<b style='color:orange'>" + kw + "</b>")
 
+    labels = sess.query(Label_.id, Label_.name).join(TaggingRecords_).filter(TaggingRecords_.doc_id == doc_id).all()
     doc_info = {'id':doc_id,'title':doc.title,'content':highlighted_content,
                 'labels':[{'id':l.id,'name':l.name} for l in labels]}
     sess.close()
