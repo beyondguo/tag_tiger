@@ -86,8 +86,8 @@ def get_detail_by_id(task_id: int):
     label_list = []
     for ls in ls_list:
         label_sys_list.append({"id": ls.id, "name": ls.name, "multi":ls.multi})
-        l_list = sess.query(Label_.id, Label_.name).join(LabelSys_).filter(Label_.label_sys_id == ls.id).all()
-        label_list.append([{"id": l.id, "name": l.name} for l in l_list])
+        l_list = sess.query(Label_.id, Label_.name, Label_.desc).join(LabelSys_).filter(Label_.label_sys_id == ls.id).all()
+        label_list.append([{"id": l.id, "name": l.name, "desc": l.desc} for l in l_list])
     res = {"name": task.name, "desc": task.desc, "create_time": task.create_time,
            "label_sys_list": label_sys_list, "label_list": label_list}
     sess.close()
